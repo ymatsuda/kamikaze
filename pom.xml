@@ -21,9 +21,42 @@
 	<url>http://github.com/javasoze/kamikaze</url>
   </scm>
   <developers></developers>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
+  <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.0-alpha-4</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <!-- Set the compiler to java6 -->
-  <!--
   <build>
     <plugins>
         <plugin>
@@ -31,13 +64,13 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <version>2.1</version>
             <configuration>
-                <source>1.6</source>
-                <target>1.6</target>
+                <source>1.5</source>
+                <target>1.5</target>
             </configuration>
         </plugin>
     </plugins>
   </build>
--->
+
   <!-- Add findbugs to reporting -->
   <!--
   <reporting>
@@ -74,6 +107,12 @@
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-core</artifactId>
       <version>2.9.1</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.5</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
