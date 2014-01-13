@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Set;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -66,10 +67,24 @@ public class PForDeltaDocIdSet extends DocSet implements Serializable {
     _blockSize = batchSize;      
   }
   
+  public static PForDeltaDocIdSet deserialize(byte[] bytesData) throws IOException
+  {
+    return deserialize(bytesData, 0);
+  }
+  
+
+  /**
+   * @deprecated Use {@link #deserialize(byte[])} instead.
+   */
+  @Deprecated 
   public static PForDeltaDocIdSet deserialize(byte[] bytesData, int offset) throws IOException
   {
     PForDeltaDocIdSet res = new PForDeltaDocIdSet();
-    
+     // 0. totalNumInt
+    Conversion.byteArrayToInt(bytesData, offset);
+    offset += Conversion.BYTES_PER_INT;
+
+    int startOffset = offset;
     // 1. version
     res.version = Conversion.byteArrayToInt(bytesData, offset);
     offset += Conversion.BYTES_PER_INT;
@@ -114,7 +129,7 @@ public class PForDeltaDocIdSet extends DocSet implements Serializable {
     
     // 9. checksum
     Checksum digest = new CRC32();
-    digest.update(bytesData, 0, offset);
+    digest.update(bytesData, startOffset, offset-startOffset);
     long checksum = digest.getValue();
     
     long receivedChecksum = Conversion.byteArrayToLong(bytesData, offset);

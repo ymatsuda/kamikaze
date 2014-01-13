@@ -1,7 +1,5 @@
 package com.kamikaze.test.perf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,6 +10,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Random;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.lucene.search.DocIdSet;
 
 import com.kamikaze.docidset.api.StatefulDSIterator;
@@ -68,10 +67,8 @@ public class TestPForSerial  {
         InputStream is = new FileInputStream(in);
         byte[] bytesSize = new byte[Conversion.BYTES_PER_INT]; 
         is.read(bytesSize);
-        int totalNumInt = Conversion.byteArrayToInt(bytesSize, 0);
-        byte[] bytesData = new byte[totalNumInt * Conversion.BYTES_PER_INT];
-        is.read(bytesData,0,bytesData.length);
-        docSetDeserializd = PForDeltaDocIdSet.deserialize(bytesData, 0);
+        byte[] bytesData = FileUtils.readFileToByteArray(in);
+        docSetDeserializd = PForDeltaDocIdSet.deserialize(bytesData);
       } catch (Exception e) {
         e.printStackTrace();
       }

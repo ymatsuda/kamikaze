@@ -1,12 +1,9 @@
 package com.kamikaze.test;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -17,6 +14,7 @@ import java.util.TreeSet;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.junit.Test;
@@ -24,7 +22,6 @@ import org.junit.Test;
 import com.kamikaze.docidset.api.StatefulDSIterator;
 import com.kamikaze.docidset.impl.NotDocIdSet;
 import com.kamikaze.docidset.impl.PForDeltaDocIdSet;
-import com.kamikaze.docidset.utils.Conversion;
 
 public class PForDeltaTestDocSetSerializationTest extends TestCase {
 
@@ -127,13 +124,8 @@ public class PForDeltaTestDocSetSerializationTest extends TestCase {
 
     try {
       File in = new File(serial);
-      InputStream is = new FileInputStream(in);
-      byte[] bytesSize = new byte[Conversion.BYTES_PER_INT]; 
-      is.read(bytesSize);
-      int totalNumInt = Conversion.byteArrayToInt(bytesSize, 0);
-      byte[] bytesData = new byte[totalNumInt * Conversion.BYTES_PER_INT];
-      is.read(bytesData,0,bytesData.length);
-      docSetDeserializd = PForDeltaDocIdSet.deserialize(bytesData, 0);
+      byte[] bytesData = FileUtils.readFileToByteArray(in);
+      docSetDeserializd = PForDeltaDocIdSet.deserialize(bytesData);
     } catch (Exception e) {
       e.printStackTrace();
       fail(e.getMessage());
@@ -180,11 +172,6 @@ public class PForDeltaTestDocSetSerializationTest extends TestCase {
     int dataSize = 15000;
     int[] result = generateRandomDataHY(originalInput,maxDoc, dataSize);
     
-//    int result[] = new int[dataSize];
-//    for(int i=0; i<dataSize; i++)
-//    {
-//      result[i] = i+1;
-//    }
     PForDeltaDocIdSet docSetOrigin = new PForDeltaDocIdSet(batch);
     
     for (int i = 0; i < result.length; i++) {
@@ -211,13 +198,8 @@ public class PForDeltaTestDocSetSerializationTest extends TestCase {
     
     try {
       File in = new File(serial);
-      InputStream is = new FileInputStream(in);
-      byte[] bytesSize = new byte[Conversion.BYTES_PER_INT]; 
-      is.read(bytesSize);
-      int totalNumInt = Conversion.byteArrayToInt(bytesSize, 0);
-      byte[] bytesData = new byte[totalNumInt * Conversion.BYTES_PER_INT];
-      is.read(bytesData,0,bytesData.length);
-      docSetDeserializd = PForDeltaDocIdSet.deserialize(bytesData, 0);
+      byte[] bytesData = FileUtils.readFileToByteArray(in);
+      docSetDeserializd = PForDeltaDocIdSet.deserialize(bytesData);
     } catch (Exception e) {
       e.printStackTrace();
       fail(e.getMessage());
@@ -327,7 +309,6 @@ public class PForDeltaTestDocSetSerializationTest extends TestCase {
   
   private static int[] generateRandomDataHY(int[] ori, int maxDoc, int numDocs)
   {
-    //System.out.println("generating random data");
     Random rand = new Random(System.currentTimeMillis()); 
     
     int i,j;
