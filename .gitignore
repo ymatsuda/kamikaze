@@ -5,3 +5,8 @@ ivy
 lib
 build-test
 SerialDocSet
+output
+.classpath
+.project
+.settings
+
